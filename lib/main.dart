@@ -1,85 +1,61 @@
 import 'package:flutter/material.dart';
-
-import 'package:wifi_connector_app/core.dart';
+import 'get_image.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final _ssidController = TextEditingController(text: '');
-  final _passwordController = TextEditingController(text: '');
-  var _isSucceed = 'false';
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Wifi connector example app'),
-        ),
-        body: ListView(
-          children: [
-            _buildTextInput(
-              'ssid',
-              _ssidController,
-            ),
-            _buildTextInput(
-              'password',
-              _passwordController,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24.0),
-              child: ElevatedButton(
-                child: const Text(
-                  'connect',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: _onConnectPressed,
-              ),
-            ),
-            Text(
-              'Is wifi connected?: $_isSucceed',
-              textAlign: TextAlign.center,
-            )
-          ],
-        ),
-      ),
+      title: "Project WIFI",
+      home: Home(),
     );
   }
+}
 
-  Widget _buildTextInput(String title, TextEditingController controller) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 24.0),
-          child: Container(width: 80.0, child: Text(title)),
+class Home extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _Home();
+  }
+}
+
+class _Home extends State<Home> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Project WIFI"),
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: TextField(
-              controller: controller,
-              onChanged: (value) => setState(
-                    () {},
-              ),
+        body: Container(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Icon(
+                  Icons.wifi_find,
+                  size: 100,
+                ),
+                SizedBox(height: 30),
+                Text("Connect wifi with camera",
+                    style: TextStyle(
+                      fontSize: 20,
+                    )),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  child: Text("Get image"),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => ImageGetPage()));
+                  },
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
             ),
           ),
-        )
-      ],
-    );
-  }
-
-  Future<void> _onConnectPressed() async {
-    final ssid = _ssidController.text;
-    final password = _passwordController.text;
-    setState(() => _isSucceed = 'false');
-    final isSucceed = await ConnectWifi(ssid: ssid, password: password);
-    setState(() => _isSucceed = isSucceed!);
+        ));
   }
 }
