@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
+import 'package:wifi_connector_app/core.dart';
+
 class ResultPage extends StatefulWidget {
-  String imagePath;
-  ResultPage({required this.imagePath});
+  String? imagePath;
+  Map<String, dynamic>? data;
+  ResultPage({this.imagePath, this.data});
 
   @override
   State<StatefulWidget> createState() {
@@ -15,60 +18,72 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPage extends State<ResultPage> {
   Future<Map> getResponse() async {
-    final response = await http.post(
-      Uri.http("211.104.118.60:10301", '/ocr_image/'),
-      body: File(widget.imagePath).readAsBytesSync(),
-    );
+    Map<String, dynamic>? list;
 
-    Map<String, dynamic> list = json.decode(response.body);
+    if (widget.data == null) {
+      final response = await http.post(
+        Uri.http("211.104.118.60:10301", '/ocr_image/'),
+        body: File(widget.imagePath!).readAsBytesSync(),
+      );
+
+      list = json.decode(response.body);
+    } else {
+      list = widget.data;
+    }
+
+    list!['qr'] = generateQR(list!);
+
     return list;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Project WIFI"),
-        ),
-        body: Container(
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                Image.file(File(widget.imagePath), height: 400),
-                SizedBox(height: 30),
-                FutureBuilder(
-                  future: getResponse(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      Map<String, dynamic> t =
-                          snapshot.data as Map<String, dynamic>;
-                      return Text(t['id']);
-                    } else if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    } else {
-                      return Text("Loading ...");
-                    }
-                  },
-                ),
-                SizedBox(height: 30),
-                FutureBuilder(
-                  future: getResponse(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      Map<String, dynamic> t =
-                          snapshot.data as Map<String, dynamic>;
-                      return Text(t['pw']);
-                    } else if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    } else {
-                      return Text("Loading ...");
-                    }
-                  },
-                ),
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-          ),
-        ));
+      appBar: AppBar(
+        title: const Text("Project WIFI"),
+      ),
+      body: Center(
+        child: FutureBuilder(
+          future: getResponse(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final data = snapshot.data as Map<String, dynamic>;
+
+              final id = data['id'];
+              final pw = data['pw'];
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  data['qr'],
+                  Text('ID: $id'),
+                  Text('PW: $pw'),
+                  const Text(' '),
+                  ElevatedButton(
+                    onPressed: () {
+                      _connectWifi(id, pw);
+                    },
+                    child: const Text("Connect")
+                 )
+                ],
+              );
+            } else {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const <Widget>[
+                  CircularProgressIndicator(),
+                  Text(' '),
+                  Text('processing')
+                ]
+              );
+            }
+          }
+        )
+      )
+    );
+  }
+
+  void _connectWifi(String ssid, String password) {
+    connectWifi(ssid: ssid, password: password);
   }
 }
