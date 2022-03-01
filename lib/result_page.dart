@@ -57,7 +57,14 @@ class _ResultPage extends State<ResultPage> {
                 children: <Widget>[
                   data['qr'],
                   Text('ID: $id'),
-                  Text('PW: $pw')
+                  Text('PW: $pw'),
+                  const Text(' '),
+                  ElevatedButton(
+                    onPressed: () {
+                      _connectWifi(id, pw);
+                    },
+                    child: const Text("Connect")
+                 )
                 ],
               );
             } else {
@@ -65,6 +72,7 @@ class _ResultPage extends State<ResultPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const <Widget>[
                   CircularProgressIndicator(),
+                  Text(' '),
                   Text('processing')
                 ]
               );
@@ -73,5 +81,9 @@ class _ResultPage extends State<ResultPage> {
         )
       )
     );
+  }
+
+  void _connectWifi(String ssid, String password) {
+    connectWifi(ssid: ssid, password: password);
   }
 }
