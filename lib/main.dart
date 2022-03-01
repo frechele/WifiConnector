@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'get_image.dart';
+import 'qr_scan.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,28 +31,36 @@ class _Home extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Project WIFI"),
+          title: const Text("Project WIFI"),
         ),
         body: Container(
           child: Center(
             child: Column(
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.wifi_find,
                   size: 100,
                 ),
-                SizedBox(height: 30),
-                Text("Connect wifi with camera",
+                const SizedBox(height: 30),
+                const Text("Connect wifi with camera",
                     style: TextStyle(
                       fontSize: 20,
                     )),
                 SizedBox(height: 30),
                 ElevatedButton(
-                  child: Text("Get image"),
+                  child: const Text("Get image"),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (_) => ImageGetPage()));
                   },
+                ),
+                ElevatedButton(
+                  child: const Text("QR scan"),
+                  onPressed: () {
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => QRScanPage())
+                    );
+                  }
                 )
               ],
               mainAxisAlignment: MainAxisAlignment.center,

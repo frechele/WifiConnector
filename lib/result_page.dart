@@ -6,8 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:wifi_connector_app/core.dart';
 
 class ResultPage extends StatefulWidget {
-  String imagePath;
-  ResultPage({required this.imagePath});
+  String? imagePath;
+  Map<String, dynamic>? data;
+  ResultPage({this.imagePath, this.data});
 
   @override
   State<StatefulWidget> createState() {
@@ -17,14 +18,20 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPage extends State<ResultPage> {
   Future<Map> getResponse() async {
-    final response = await http.post(
-      Uri.http("211.104.118.60:10301", '/ocr_image/'),
-      body: File(widget.imagePath).readAsBytesSync(),
-    );
+    Map<String, dynamic>? list;
 
-    Map<String, dynamic> list = json.decode(response.body);
+    if (widget.data == null) {
+      final response = await http.post(
+        Uri.http("211.104.118.60:10301", '/ocr_image/'),
+        body: File(widget.imagePath!).readAsBytesSync(),
+      );
 
-    list['qr'] = generateQR(list);
+      list = json.decode(response.body);
+    } else {
+      list = widget.data;
+    }
+
+    list!['qr'] = generateQR(list!);
 
     return list;
   }
