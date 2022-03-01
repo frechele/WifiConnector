@@ -8,16 +8,12 @@ Future<String?> connectWifi({required String ssid, required String password}) {
   return EasyWifiConnect.connectWifi(ssid, password);
 }
 
-Future<Image> generateQR(Object object) async {
+QrImage generateQR(Object object) {
   final jsonStr = jsonEncode(object);
 
-  final painter = QrPainter(
+  return QrImage(
     data: jsonStr,
     version: QrVersions.auto,
-    gapless: false,
-    color: const Color(0xFF000000),
-    emptyColor: const Color(0xFFFFFFFF)
+    size: 200
   );
-
-  return await painter.toImage(300);
 }
