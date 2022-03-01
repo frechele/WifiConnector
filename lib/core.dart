@@ -4,11 +4,11 @@ import 'dart:ui';
 import 'package:easy_wifi_connect/easy_wifi_connect.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-Future<String?> ConnectWifi({required String ssid, required String password}) {
+Future<String?> connectWifi({required String ssid, required String password}) {
   return EasyWifiConnect.connectWifi(ssid, password);
 }
 
-Future<Image> GenerateQR(Object object) async {
+Future<Image> generateQR(Object object) async {
   final jsonStr = jsonEncode(object);
 
   final painter = QrPainter(
